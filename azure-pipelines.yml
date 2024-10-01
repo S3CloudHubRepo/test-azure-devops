@@ -20,3 +20,9 @@ steps:
 - script: |
     python app.py
   displayName: 'Run Python Script'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)'  # Publish the entire working directory
+    ArtifactName: 'PythonAppArtifacts'
+    publishLocation: 'Container'
