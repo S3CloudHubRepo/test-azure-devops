@@ -21,8 +21,20 @@ steps:
     python app.py
   displayName: 'Run Python Script'
 
+- script: |
+    # Build the package
+    python setup.py sdist bdist_wheel
+  displayName: 'Build Package'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(System.DefaultWorkingDirectory)'  # Publish the entire working directory
     ArtifactName: 'PythonAppArtifacts'
     publishLocation: 'Container'
+    
+- task: AzureArtifacts@0
+  inputs:
+    command: 'push'
+    feed: 's3cloudhub0666'
+    packageType: 'pypi'
+    packagesToPublish: '$(System.DefaultWorkingDirectory)/dist/*'
