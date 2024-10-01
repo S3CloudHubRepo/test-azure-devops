@@ -28,13 +28,19 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(System.DefaultWorkingDirectory)'  # Publish the entire working directory
+    PathtoPublish: '$(System.DefaultWorkingDirectory)/dist'  # Publish the dist directory
     ArtifactName: 'PythonAppArtifacts'
     publishLocation: 'Container'
     
-- task: AzureArtifacts@0
+- task: AzureCLI@2
   inputs:
-    command: 'push'
-    feed: 's3cloudhub0666'
-    packageType: 'pypi'
-    packagesToPublish: '$(System.DefaultWorkingDirectory)/dist/*'
+    azureSubscription: '<your-azure-subscription>' # Specify your Azure service connection
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az artifacts universal publish \
+        --feed s3cloudhub0666 \
+        --name your-package-name \
+        --version 0.1 \
+        --description "Your package description" \
+        --path $(System.DefaultWorkingDirectory)/dist
